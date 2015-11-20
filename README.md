@@ -24,7 +24,7 @@ It support R, SparkR, Scala to R binding, R to Scala binding, cross paragraph va
 
 [![SparkR](https://raw.githubusercontent.com/datalayer/zeppelin-R/rscala/_Rimg/sparkr.png)](https://raw.githubusercontent.com/datalayer/zeppelin-R/rscala/_Rimg/sparkr.png)
 
-# Prerequisitec
+# Prerequisite
 
 You need to have R (with Rserve, ggplot2 knitr) available on the host running the notebook.
 
@@ -45,6 +45,9 @@ You also need a [compiled version of Spark 1.5.0](http://archive.apache.org/dist
 
 ```
 mvn clean install -Pspark-1.5 -Dspark.version=1.5.0 -Dhadoop.version=2.7.1 -Phadoop-2.6 -Ppyspark -Dmaven.findbugs.enable=false -Drat.skip=true -Dcheckstyle.skip=true -DskipTests -pl '!flink,!ignite,!phoenix,!postgresql,!tajo,!hive,!cassandra,!lens,!kylin'
+```
+
+```
 SPARK_HOME=/opt/spark-1.5.0-bin-hadoop2.6 ./bin/zeppelin.sh
 ```
 
@@ -52,7 +55,7 @@ Go to [http://localhost:8080](http://localhost:8080) and test the .
 
 ## Get the image from the Docker Repository
 
-[Datalayer](http://datalayer.io) provides an up-to-date Docker image for [Apache Zeppelin](http://zeppelin.incubator.apache.org), the WEB Notebook for Big Data Science.
+For your convenience, [Datalayer](http://datalayer.io) provides an up-to-date Docker image for [Apache Zeppelin](http://zeppelin.incubator.apache.org), the WEB Notebook for Big Data Science.
 
 In order to get the image, you can run with the appropriate rights:
 
