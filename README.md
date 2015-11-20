@@ -39,7 +39,7 @@ R CMD BATCH install.packages("ggplot2")
 R CMD BATCH install.packages("knitr")
 ```
 
-You also need a [compiled version of Spark 1.5.0](http://archive.apache.org/dist/spark/spark-1.5.0/spark-1.5.0-bin-hadoop2.6.tgz)
+You also need a compiled version of Spark 1.5.0. [Download](http://archive.apache.org/dist/spark/spark-1.5.0/spark-1.5.0-bin-hadoop2.6.tgz) and untar in your `/opt` folder.
 
 # Build and Run
 
