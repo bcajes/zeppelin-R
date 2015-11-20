@@ -278,6 +278,13 @@
       <version>${py4j.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.ddahl</groupId>
+      <artifactId>rscala</artifactId>
+      <version>1.0.6</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/lib/rscala_2.10-1.0.6.jar</systemPath>
+    </dependency>
 
     <!--TEST-->
     <dependency>

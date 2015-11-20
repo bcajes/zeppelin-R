@@ -647,6 +647,14 @@ public class ZeppelinContext extends HashMap<String, Object> {
     angularUnbind(name, null);
   }
 
+  public void toR(String key, Object value) {
+    ZeppelinR.set(key, value);
+  }
+
+  public Object fromR(String key) {
+    return ZeppelinR.get(key);
+  }
+
   /**
    * Create angular variable in local registry and bind with front end Angular display system.
    * If variable exists, it'll be overwritten.
