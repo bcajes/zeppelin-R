@@ -23,6 +23,7 @@ object ZeppelinR {
   private val R = RClient()
 
   def open(master: String = "local[*]", sparkHome: String): Unit = {
+/*
     R.eval(
       s"""
          |Sys.setenv(SPARK_HOME="$sparkHome")
@@ -33,6 +34,7 @@ object ZeppelinR {
        """.
         stripMargin
     )
+*/
     eval("library('knitr')")
     eval(
       """
@@ -46,7 +48,11 @@ object ZeppelinR {
   }
 
   def eval(command: String): Any = {
-    R.eval(command)
+    try {
+      R.eval(command)
+    } catch {
+      case e: Exception => throw new RuntimeException(e.getMessage + " - Given R command=" + command)
+    }
   }
 
   def set(key: String, value: AnyRef): Unit = {
