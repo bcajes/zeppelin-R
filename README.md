@@ -26,12 +26,12 @@ It support R, SparkR, Scala to R binding, R to Scala binding, cross paragraph va
 
 # Prerequisite
 
-You need to have R (with Rserve, ggplot2 knitr) available on the host running the notebook.
+You need R available on the host running the notebook.
 
 + For Centos: `yum install R R-devel`
 + For Ubuntu: `apt-get install r-base r-cran-rserve`
 
-Launch R commands tos install the needed packages:
+Install additional R packages:
 
 ```
 R CMD BATCH install.packages("Rserve")
