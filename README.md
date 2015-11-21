@@ -37,6 +37,7 @@ Launch R commands tos install the needed packages:
 R CMD BATCH install.packages("Rserve")
 R CMD BATCH install.packages("ggplot2")
 R CMD BATCH install.packages("knitr")
+R CMD BATCH install.packages("rscala")
 ```
 
 You also need a compiled version of Spark 1.5.0. [Download](http://archive.apache.org/dist/spark/spark-1.5.0/spark-1.5.0-bin-hadoop2.6.tgz) and untar in your `/opt` folder.
