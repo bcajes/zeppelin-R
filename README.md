@@ -2,7 +2,14 @@
 
 This adds [R](http://cran.r-project.org) interpeter to the [Apache Zeppelin notebook](http://zeppelin.incubator.apache.org).
 
-It support R, SparkR, Scala to R binding, R to Scala binding, cross paragraph variables and R plot (ggplot2...).
+It supports:
+
++ R code.
++ SparkR code.
++ Cross paragraph R variables.
++ Scala to R binding (passing basic Scala data structure to R).
++ R to Scala binding  (passing basic R data structure to Scala).
++ R plot (ggplot2...).
 
 ## Simple R
 
@@ -39,7 +46,7 @@ R CMD BATCH install.packages("ggplot2")
 R CMD BATCH install.packages("knitr")
 ```
 
-You also need a compiled version of Spark 1.5.0. [Download](http://archive.apache.org/dist/spark/spark-1.5.0/spark-1.5.0-bin-hadoop2.6.tgz) and untar in your `/opt` folder.
+You also need a compiled version of Spark 1.5.0. Download [the binary distribution](http://archive.apache.org/dist/spark/spark-1.5.0/spark-1.5.0-bin-hadoop2.6.tgz) and untar to make it accessible in `/opt/spark` folder.
 
 # Build and Run
 
@@ -48,7 +55,7 @@ mvn clean install -Pspark-1.5 -Dspark.version=1.5.0 -Dhadoop.version=2.7.1 -Phad
 ```
 
 ```
-SPARK_HOME=/opt/spark-1.5.0-bin-hadoop2.6 ./bin/zeppelin.sh
+SPARK_HOME=/opt/spark ./bin/zeppelin.sh
 ```
 
 Go to [http://localhost:8080](http://localhost:8080) and test the `R Tutorial` note.
@@ -65,7 +72,7 @@ Run the Zeppelin notebook with:
 
 `docker run -it -p 2222:22 -p 8080:8080 -p 4040:4040 datalayer/zeppelin-rscala`
 
-and go to [http://localhost:8080](http://localhost:8080).
+and go to [http://localhost:8080](http://localhost:8080) to test the `R Tutorial` note.
 
 # License
 
