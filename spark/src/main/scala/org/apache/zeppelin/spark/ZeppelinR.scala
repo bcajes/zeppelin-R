@@ -22,7 +22,9 @@ import org.ddahl.rscala.callback._
 object ZeppelinR {
   private val R = RClient()
 
-  def open(master: String = "local[*]", sparkHome: String): Unit = {
+  def open(master: String = "local[*]", sparkHome: String = "/opt/spark"): Unit = {
+
+  // TODO we don't take into account the given params for now to deal with inconsistent behavior running in Docker image.
 /*
     R.eval(
       s"""
@@ -31,10 +33,18 @@ object ZeppelinR {
          |library(SparkR)
          |sc <- sparkR.init(master="$master")
          |sqlContext <- sparkRSQL.init(jsc = sc)
-       """.
-        stripMargin
+       """.stripMargin
     )
 */
+    R.eval(
+      """
+         |Sys.setenv(SPARK_HOME="/opt/spark")
+         |.libPaths(c(file.path(Sys.getenv("SPARK_HOME"), "R", "lib"), .libPaths()))
+         |library(SparkR)
+         |sc <- sparkR.init(master="local[*]")
+         |sqlContext <- sparkRSQL.init(jsc = sc)
+       """.stripMargin
+    )
     eval("library('knitr')")
     eval(
       """
