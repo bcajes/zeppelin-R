@@ -51,7 +51,11 @@ You also need a compiled version of Spark 1.5.0. Download [the binary distributi
 # Build and Run
 
 ```
-mvn clean install -Pspark-1.5 -Dspark.version=1.5.0 -Dhadoop.version=2.7.1 -Phadoop-2.6 -Ppyspark -Dmaven.findbugs.enable=false -Drat.skip=true -Dcheckstyle.skip=true -DskipTests -pl '!flink,!ignite,!phoenix,!postgresql,!tajo,!hive,!cassandra,!lens,!kylin'
+mvn clean install -Pspark-1.5 -Dspark.version=1.5.0 \
+  -Dhadoop.version=2.7.1 -Phadoop-2.6 -Ppyspark \
+  -Dmaven.findbugs.enable=false -Drat.skip=true -Dcheckstyle.skip=true \
+  -DskipTests \
+  -pl '!flink,!ignite,!phoenix,!postgresql,!tajo,!hive,!cassandra,!lens,!kylin'
 ```
 
 ```
