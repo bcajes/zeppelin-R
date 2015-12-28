@@ -41,11 +41,10 @@ You need R available on the host running the notebook.
 Install additional R packages:
 
 ```
-R CMD BATCH install.packages("devtools", repos = "http://cran.us.r-project.org")
-R CMD BATCH require(devtools)
-R CMD BATCH install_version("rscala", version = "1.0.6", repos = "http://cran.us.r-project.org")
-R CMD BATCH install.packages("ggplot2")
-R CMD BATCH install.packages("knitr")
+curl https://cran.r-project.org/src/contrib/Archive/rscala/rscala_1.0.6.tar.gz -o /tmp/rscala_1.0.6.tar.gz
+R CMD INSTALL /tmp/rscala_1.0.6.tar.gz
+R -e "install.packages('ggplot2', repos = 'http://cran.us.r-project.org')"
+R -e install.packages('knitr', repos = 'http://cran.us.r-project.org')
 ```
 
 You also need a compiled version of Spark 1.5.0. Download [the binary distribution](http://archive.apache.org/dist/spark/spark-1.5.0/spark-1.5.0-bin-hadoop2.6.tgz) and untar to make it accessible in `/opt/spark` folder.
