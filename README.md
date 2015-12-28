@@ -41,7 +41,9 @@ You need R available on the host running the notebook.
 Install additional R packages:
 
 ```
-R CMD BATCH install.packages("rscala")
+R CMD BATCH install.packages("devtools", repos = "http://cran.us.r-project.org")
+R CMD BATCH require(devtools)
+R CMD BATCH install_version("rscala", version = "1.0.6", repos = "http://cran.us.r-project.org")
 R CMD BATCH install.packages("ggplot2")
 R CMD BATCH install.packages("knitr")
 ```
