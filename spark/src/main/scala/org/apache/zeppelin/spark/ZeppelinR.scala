@@ -17,44 +17,80 @@
 
 package org.apache.zeppelin.spark
 
+import org.apache.spark.SparkRBackend
 import org.ddahl.rscala.callback._
 
 object ZeppelinR {
+
   private val R = RClient()
 
-  def open(master: String = "local[*]", sparkHome: String = "/opt/spark"): Unit = {
+  def open(master: String = "local[*]", sparkHome: String = "/opt/spark", sparkInterpreter: SparkInterpreter): Unit = {
 
-  // TODO we don't take into account the given params for now to deal with inconsistent behavior running in Docker image.
-/*
-    R.eval(
+    eval(
       s"""
          |Sys.setenv(SPARK_HOME="$sparkHome")
          |.libPaths(c(file.path(Sys.getenv("SPARK_HOME"), "R", "lib"), .libPaths()))
          |library(SparkR)
-         |sc <- sparkR.init(master="$master")
-         |sqlContext <- sparkRSQL.init(jsc = sc)
        """.stripMargin
     )
-*/
-    R.eval(
-      """
-         |Sys.setenv(SPARK_HOME="/opt/spark")
-         |.libPaths(c(file.path(Sys.getenv("SPARK_HOME"), "R", "lib"), .libPaths()))
-         |library(SparkR)
-         |sc <- sparkR.init(master="local[*]")
-         |sqlContext <- sparkRSQL.init(jsc = sc)
-       """.stripMargin
-    )
-    eval("library('knitr')")
+
+    // See ./core/src/main/scala/org/apache/spark/deploy/RRunner.scala for RBackend usage
+    val port = SparkRBackend.init()
+    SparkRBackend.start()
+    eval(
+      s"""
+         |SparkR:::connectBackend("localhost", ${port})
+         |""".stripMargin)
+
+    // scStartTime is needed by R/pkg/R/sparkR.R
     eval(
       """
-        |getFunctionNames <- function() {
-        |   loaded <- (.packages())
-        |   loaded <- paste("package:", loaded, sep ="")
-        |   return(sort(unlist(lapply(loaded, lsf.str))))
-        | }
-      """.stripMargin
+        |assign(".scStartTime", as.integer(Sys.time()), envir = SparkR:::.sparkREnv)
+      """.stripMargin)
+
+    ZeppelinRContext.setSparkContext(sparkInterpreter.getSparkContext())
+    eval(
+      """
+        |assign(".sc", SparkR:::callJStatic("org.apache.zeppelin.spark.ZeppelinRContext", "getSparkContext"), envir = SparkR:::.sparkREnv)
+        |""".stripMargin)
+    eval(
+      """
+        |assign("sc", get(".sc", envir = SparkR:::.sparkREnv), envir=.GlobalEnv)
+      """.stripMargin)
+
+    ZeppelinRContext.setSqlContext(sparkInterpreter.getSQLContext())
+    eval(
+      """
+         |assign(".sqlc", SparkR:::callJStatic("org.apache.zeppelin.spark.ZeppelinRContext", "getSqlContext"), envir = SparkR:::.sparkREnv)
+         |""".stripMargin)
+    eval(
+      """
+         |assign("sqlContext", get(".sqlc", envir = SparkR:::.sparkREnv), envir = .GlobalEnv)
+         |""".stripMargin)
+
+    ZeppelinRContext.setZepplinContext(sparkInterpreter.getZeppelinContext())
+    eval(
+      """
+         |assign(".zeppelinContext", SparkR:::callJStatic("org.apache.zeppelin.spark.ZeppelinRContext", "getZeppelinContext"), envir = .GlobalEnv)
+         |""".stripMargin
     )
+
+    eval(
+      """
+         |z.put <- function(name, object) {
+         |  SparkR:::callJMethod(.zeppelinContext, "put", name, object)
+         |}
+         |z.get <- function(name) {
+         |  SparkR:::callJMethod(.zeppelinContext, "get", name)
+         |}
+         |""".stripMargin
+    )
+
+    eval(
+      """
+        |library("knitr")
+      """.stripMargin)
+
   }
 
   def eval(command: String): Any = {
@@ -71,6 +107,10 @@ object ZeppelinR {
 
   def get(key: String): Any = {
     R.get(key)._1
+  }
+
+  def getS0(key: String): String = {
+    R.getS0(key)
   }
 
   def close():Unit = {

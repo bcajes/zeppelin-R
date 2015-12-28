@@ -27,9 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.nio.file.Files;
 
 /**
  * R and SparkR interpreter.
@@ -58,28 +55,17 @@ public class SparkRInterpreter extends Interpreter {
 
   @Override
   public void open() {
-    ZeppelinR.open(getProperty("spark.master"), getProperty("spark.home"));
+    ZeppelinR.open(getProperty("spark.master"), getProperty("spark.home"), getSparkInterpreter());
   }
 
   @Override
   public InterpreterResult interpret(String lines, InterpreterContext contextInterpreter) {
-    BufferedWriter writer = null;
+
     try {
-      File in = File.createTempFile("forKnitR-" +
-              contextInterpreter.getParagraphId(), ".Rmd");
-      String inPath = in.getAbsolutePath().substring(0, in.getAbsolutePath().length() - 4);
-      File out = new File(inPath + ".html");
 
-      writer = new BufferedWriter(new FileWriter(in));
-      writer.write("\n```{r comment=NA, echo=FALSE}\n" + lines + "\n```");
-      writer.close();
-
-      String rcmd = "knit2html('" + in.getAbsolutePath() + "', output = '"
-              + out.getAbsolutePath() + "')" + "\n";
-
-      ZeppelinR.eval(rcmd);
-
-      String html = new String(Files.readAllBytes(out.toPath()));
+      ZeppelinR.set(".zcmd", "\n```{r comment=NA, echo=FALSE}\n" + lines + "\n```");
+      ZeppelinR.eval(".zres <- knit2html(text=.zcmd)");
+      String html = ZeppelinR.getS0(".zres");
 
       // Only keep the bare results.
       String htmlOut = html.substring(html.indexOf("<body>") + 7, html.indexOf("</body>") - 1)
@@ -92,13 +78,8 @@ public class SparkRInterpreter extends Interpreter {
     } catch (Exception e) {
       logger.error("Exception while connecting to R", e);
       return new InterpreterResult(InterpreterResult.Code.ERROR, e.getMessage());
-    } finally {
-      try {
-        writer.close();
-      } catch (Exception e) {
-        // Do nothing...
-      }
     }
+
   }
 
   @Override
@@ -128,6 +109,22 @@ public class SparkRInterpreter extends Interpreter {
   @Override
   public List<String> completion(String buf, int cursor) {
     return new ArrayList<String>();
+  }
+
+  private SparkInterpreter getSparkInterpreter() {
+    for (Interpreter intp : getInterpreterGroup()) {
+      if (intp.getClassName().equals(SparkInterpreter.class.getName())) {
+        Interpreter p = intp;
+        while (p instanceof WrappedInterpreter) {
+          if (p instanceof LazyOpenInterpreter) {
+            p.open();
+          }
+          p = ((WrappedInterpreter) p).getInnerInterpreter();
+        }
+        return (SparkInterpreter) p;
+      }
+    }
+    return null;
   }
 
 }
